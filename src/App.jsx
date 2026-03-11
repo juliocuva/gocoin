@@ -88,14 +88,15 @@ const App = () => {
     const { data, error } = await supabase
       .from('transactions')
       .select('*')
-      .eq('user_email', user.email);
+      .eq('user_email', user.email)
+      .order('created_at', { ascending: false });
 
     if (error) {
       console.error('Error fetching transactions:', error);
     } else {
       setTransactions(data.map(t => ({
         ...t,
-        date: new Date(), // Fallback since no date column exists in screenshot
+        date: new Date(t.created_at),
         icon: t.type === 'income' ? <Plus size={20} /> : <ShoppingBag size={20} />
       })));
     }
@@ -151,13 +152,12 @@ const App = () => {
     }
   };
 
-  const handleDeleteTransaction = async (title) => {
+  const handleDeleteTransaction = async (id) => {
     if (window.confirm('¿Estás seguro de que quieres eliminar este registro?')) {
       const { error } = await supabase
         .from('transactions')
         .delete()
-        .eq('user_email', user.email)
-        .eq('title', title);
+        .eq('id', id);
 
       if (error) {
         alert('Error al eliminar: ' + error.message);
@@ -344,7 +344,7 @@ const App = () => {
                         className="tx-delete-btn"
                         onClick={(e) => {
                           e.stopPropagation();
-                          handleDeleteTransaction(tx.title);
+                          handleDeleteTransaction(tx.id);
                         }}
                         aria-label="Eliminar transacción"
                       >
