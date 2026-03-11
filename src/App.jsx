@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Plus, 
@@ -35,6 +35,12 @@ import {
   Cell,
   Legend
 } from 'recharts';
+import { createClient } from '@supabase/supabase-js';
+
+const supabase = createClient(
+  'https://oiwlqwwecyeupnlefqtx.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9pd2xxd3dlY3lldXBubGVmcXR4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMyNjg4NDYsImV4cCI6MjA4ODg0NDg0Nn0.2e6Gy6X7OqIZbhEUkLFcxVyDMXmiVGHK63JF0e6lTFw'
+);
 
 import './App.css';
 import logo from './assets/logo.png';
@@ -68,6 +74,34 @@ const App = () => {
   const [currentMonth, setCurrentMonth] = useState(new Date());
 
   const [transactions, setTransactions] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  // Fetch transactions from Supabase
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      fetchTransactions();
+    }
+  }, [isAuthenticated, user]);
+
+  const fetchTransactions = async () => {
+    setLoading(true);
+    const { data, error } = await supabase
+      .from('transactions')
+      .select('*')
+      .eq('user_email', user.email)
+      .order('date', { ascending: false });
+
+    if (error) {
+      console.error('Error fetching transactions:', error);
+    } else {
+      setTransactions(data.map(t => ({
+        ...t,
+        date: new Date(t.date),
+        icon: t.type === 'income' ? <Plus size={20} /> : <ShoppingBag size={20} />
+      })));
+    }
+    setLoading(false);
+  };
 
   // Derived Values
   const totals = useMemo(() => {
@@ -99,15 +133,38 @@ const App = () => {
 
   const totalPages = Math.ceil(filteredTransactions.length / ITEMS_PER_PAGE);
 
-  const handleAddTransaction = (newTx) => {
-    setTransactions([newTx, ...transactions]);
-    setCurrentPage(1);
-    setShowAddModal(false);
+  const handleAddTransaction = async (newTx) => {
+    const { error } = await supabase
+      .from('transactions')
+      .insert([{
+        user_email: user.email,
+        title: newTx.title,
+        amount: newTx.amount,
+        type: newTx.type,
+        category: newTx.category,
+        date: new Date().toISOString()
+      }]);
+
+    if (error) {
+      alert('Error al guardar en Supabase: ' + error.message);
+    } else {
+      fetchTransactions();
+      setShowAddModal(false);
+    }
   };
 
-  const handleDeleteTransaction = (id) => {
+  const handleDeleteTransaction = async (id) => {
     if (window.confirm('¿Estás seguro de que quieres eliminar este registro?')) {
-      setTransactions(transactions.filter(tx => tx.id !== id));
+      const { error } = await supabase
+        .from('transactions')
+        .delete()
+        .eq('id', id);
+
+      if (error) {
+        alert('Error al eliminar: ' + error.message);
+      } else {
+        fetchTransactions();
+      }
     }
   };
 
