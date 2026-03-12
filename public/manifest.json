@@ -1,20 +1,21 @@
 {
-  "short_name": "Coin",
-  "name": "Coin | Finanzas Católicas",
+  "short_name": "GoCoink",
+  "name": "GoCoink | Finanzas Personales",
   "icons": [
     {
       "src": "favicon.png",
-      "sizes": "64x64 32x32 24x24 16x16",
+      "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "coin-logo.png",
+      "src": "icon-512.png",
       "type": "image/png",
-      "sizes": "512x512"
+      "sizes": "512x512",
+      "purpose": "any maskable"
     }
   ],
   "start_url": ".",
   "display": "standalone",
-  "theme_color": "#6B21A8",
+  "theme_color": "#662D91",
   "background_color": "#ffffff"
 }
