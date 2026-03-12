@@ -401,7 +401,6 @@ const App = () => {
         ) : (
           <StatisticsView 
             transactions={transactions} 
-            onClearAll={clearAllData}
           />
         )}
       </main>
@@ -492,7 +491,7 @@ const App = () => {
   );
 };
 
-const StatisticsView = ({ transactions, onClearAll }) => {
+const StatisticsView = ({ transactions }) => {
   const [statsPeriod, setStatsPeriod] = useState('monthly'); // 'monthly', 'annual'
   const [currentDate, setCurrentDate] = useState(new Date());
 
@@ -655,13 +654,6 @@ const StatisticsView = ({ transactions, onClearAll }) => {
           <span className="summary-value truncate">{stats.topCategory}</span>
           <span className="summary-pct">{stats.topCategoryPct}% del total</span>
         </div>
-      </div>
-
-      <div className="stats-actions-footer">
-        <button className="nuke-btn" onClick={onClearAll}>
-          <X size={16} />
-          Borrar todos mis datos
-        </button>
       </div>
     </motion.div>
   );
