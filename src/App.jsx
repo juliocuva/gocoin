@@ -167,6 +167,24 @@ const App = () => {
     }
   };
 
+  const clearAllData = async () => {
+    if (window.confirm('¿ELIMINAR TODO? Esta acción no se puede deshacer y borrará todos tus registros históricos.')) {
+      setLoading(true);
+      const { error } = await supabase
+        .from('transactions')
+        .delete()
+        .eq('user_email', user.email);
+
+      if (error) {
+        alert('Error al limpiar datos: ' + error.message);
+      } else {
+        fetchTransactions();
+        alert('Todos los datos han sido eliminados.');
+      }
+      setLoading(false);
+    }
+  };
+
   const clearFilters = () => {
     setSelectedDate(null);
     setFilterType('all');
@@ -381,7 +399,10 @@ const App = () => {
             <div style={{ height: 20 }}></div>
           </>
         ) : (
-          <StatisticsView transactions={transactions} />
+          <StatisticsView 
+            transactions={transactions} 
+            onClearAll={clearAllData}
+          />
         )}
       </main>
 
@@ -471,7 +492,7 @@ const App = () => {
   );
 };
 
-const StatisticsView = ({ transactions }) => {
+const StatisticsView = ({ transactions, onClearAll }) => {
   const [statsPeriod, setStatsPeriod] = useState('monthly'); // 'monthly', 'annual'
   const [currentDate, setCurrentDate] = useState(new Date());
 
@@ -634,6 +655,13 @@ const StatisticsView = ({ transactions }) => {
           <span className="summary-value truncate">{stats.topCategory}</span>
           <span className="summary-pct">{stats.topCategoryPct}% del total</span>
         </div>
+      </div>
+
+      <div className="stats-actions-footer">
+        <button className="nuke-btn" onClick={onClearAll}>
+          <X size={16} />
+          Borrar todos mis datos
+        </button>
       </div>
     </motion.div>
   );

@@ -421,21 +421,24 @@
 .tx-delete-btn {
   background: transparent;
   border: none;
-  color: var(--text-secondary);
-  opacity: 0.3;
-  padding: 8px;
+  color: var(--expense-color);
+  opacity: 0.6;
+  padding: 10px;
   cursor: pointer;
   transition: all 0.2s ease;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 8px;
+  border-radius: 10px;
 }
 
 .tx-delete-btn:hover {
   opacity: 1;
-  color: var(--expense-color);
-  background: rgba(239, 68, 68, 0.05);
+  background: rgba(239, 68, 68, 0.08);
+}
+
+.tx-delete-btn:active {
+  transform: scale(0.9);
 }
 
 /* Pagination */
@@ -1082,4 +1085,36 @@
   font-weight: 700;
   cursor: pointer;
 }
+
+.stats-actions-footer {
+  margin-top: 32px;
+  display: flex;
+  justify-content: center;
+  padding-bottom: 20px;
+}
+
+.nuke-btn {
+  background: transparent;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  color: var(--expense-color);
+  padding: 8px 16px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.nuke-btn:hover {
+  background: rgba(239, 68, 68, 0.05);
+  border-color: var(--expense-color);
+}
+
+.nuke-btn:active {
+  transform: scale(0.95);
+}
+
 
