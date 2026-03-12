@@ -1,13 +1,13 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap');
 
 :root {
-  /* Default Light Theme - Intense Purple Update */
+  /* Default Light Theme - Custom Purple Update */
   --bg-color: #f8fafc;
   --surface-color: #ffffff;
-  --primary-color: #6b21a8; /* Intense Purple matched to logo */
-  --secondary-color: #7e22ce;
+  --primary-color: #662D91; /* New specific purple requested by user */
+  --secondary-color: #8338ec; /* Adjusted secondary to match new primary */
   --accent-color: #ec4899;
-  --income-color: #10b981;
+  --income-color: #06d6a0;
   --expense-color: #ef4444;
   --text-primary: #1e293b;
   --text-secondary: #64748b;
