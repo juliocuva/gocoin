@@ -558,22 +558,25 @@ const StatisticsView = ({ transactions }) => {
     const expense = periodTxs.reduce((sum, t) => t.type === 'expense' ? sum + t.amount : sum, 0);
     const balance = income - expense;
     
-    // Find category with most expense
-    const categories = periodTxs.filter(t => t.type === 'expense').reduce((acc, t) => {
-      acc[t.category] = (acc[t.category] || 0) + t.amount;
-      return acc;
-    }, {});
-    
-    let topCategory = "N/A";
-    let topCategoryAmount = 0;
-    Object.entries(categories).forEach(([name, amt]) => {
-      if (amt > topCategoryAmount) {
-        topCategoryAmount = amt;
-        topCategory = name;
+    // Find the single transaction (item) with the highest amount for expenses
+    const expenses = periodTxs.filter(t => t.type === 'expense');
+    let topItemName = "Sin gastos";
+    let topItemAmount = 0;
+
+    expenses.forEach(t => {
+      if (t.amount > topItemAmount) {
+        topItemAmount = t.amount;
+        topItemName = t.title;
       }
     });
 
-    return { income, expense, balance, topCategory, topCategoryPct: expense > 0 ? (topCategoryAmount / expense * 100).toFixed(0) : 0 };
+    return { 
+      income, 
+      expense, 
+      balance, 
+      topCategory: topItemName, 
+      topCategoryPct: expense > 0 ? (topItemAmount / expense * 100).toFixed(0) : 0 
+    };
   }, [transactions, statsPeriod, currentDate]);
 
   const handlePrev = () => {
