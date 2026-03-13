@@ -76,6 +76,36 @@ const App = () => {
   const [loading, setLoading] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
 
+  // Handle real Supabase Auth
+  useEffect(() => {
+    // Check current session on mount
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) {
+        setUser({ 
+          email: session.user.email, 
+          name: session.user.user_metadata.full_name || session.user.email.split('@')[0] 
+        });
+        setIsAuthenticated(true);
+      }
+    });
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session) {
+        setUser({ 
+          email: session.user.email, 
+          name: session.user.user_metadata.full_name || session.user.email.split('@')[0] 
+        });
+        setIsAuthenticated(true);
+      } else {
+        setUser(null);
+        setIsAuthenticated(false);
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
   // Fetch transactions from Supabase
   useEffect(() => {
     if (isAuthenticated && user) {
@@ -195,10 +225,12 @@ const App = () => {
     return <AuthView onLogin={(userData) => { setIsAuthenticated(true); setUser(userData); }} />;
   }
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
     setIsAuthenticated(false);
     setUser(null);
     setTransactions([]);
+    setShowUserMenu(false);
   };
 
   return (
@@ -720,11 +752,17 @@ const AuthView = ({ onLogin }) => {
     }
   };
 
-  const handleGoogleLogin = () => {
-    // Generar un email único para que empiece en 0
-    const uniqueEmail = `user_${Date.now()}@google.com`;
-    console.log("Iniciando Google Login simulado...");
-    onLogin({ email: uniqueEmail, name: 'Nuevo Usuario' });
+  const handleGoogleLogin = async () => {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: window.location.origin
+      }
+    });
+    
+    if (error) {
+      alert("Error al conectar con Google: " + error.message);
+    }
   };
 
   return (
