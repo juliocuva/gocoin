@@ -11,16 +11,13 @@ import {
   BarChart2,
   Settings,
   User,
-  Coffee,
-  ShoppingBag,
-  Zap,
-  Briefcase,
   X,
   ChevronLeft,
   ChevronRight,
   ChevronDown,
   Mail,
-  Lock
+  Lock,
+  LogOut
 } from 'lucide-react';
 import { format, isSameDay, startOfMonth, endOfMonth, eachMonthOfInterval, subMonths, addMonths, isSameMonth, startOfWeek, endOfWeek, eachDayOfInterval, isSameYear, startOfYear, endOfYear } from 'date-fns';
 import { es } from 'date-fns/locale';
@@ -77,6 +74,7 @@ const App = () => {
 
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [showUserMenu, setShowUserMenu] = useState(false);
 
   // Fetch transactions from Supabase
   useEffect(() => {
@@ -210,17 +208,47 @@ const App = () => {
 
       <header className="app-header">
         <div className="header-actions left">
-          <button className="icon-btn-ghost" onClick={handleLogout} title="Cerrar Sesión">
-            <X size={20} />
-          </button>
+          {/* Espacio reservado para balance visual si se requiere */}
         </div>
         <div className="logo-container centered">
           <img src={logo} alt="GoCoin" className="app-logo-header" />
         </div>
         <div className="header-actions right">
-          <button className="icon-btn-ghost" title="Usuario">
-            <User size={20} />
-          </button>
+          <div className="user-menu-wrapper">
+            <button 
+              className="user-avatar-btn" 
+              onClick={() => setShowUserMenu(!showUserMenu)}
+              title="Menú de usuario"
+            >
+              <div className="avatar-circle">
+                {user?.name?.charAt(0).toUpperCase() || <User size={18} />}
+              </div>
+            </button>
+            
+            <AnimatePresence>
+              {showUserMenu && (
+                <>
+                  <div className="menu-backdrop" onClick={() => setShowUserMenu(false)} />
+                  <motion.div 
+                    className="user-dropdown-menu glass"
+                    initial={{ opacity: 0, scale: 0.9, y: 10 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.9, y: 10 }}
+                  >
+                    <div className="menu-user-info">
+                      <span className="user-display-name">{user?.name}</span>
+                      <span className="user-display-email">{user?.email}</span>
+                    </div>
+                    <div className="menu-divider"></div>
+                    <button className="menu-item logout-item" onClick={handleLogout}>
+                      <LogOut size={16} />
+                      <span>Cerrar Sesión</span>
+                    </button>
+                  </motion.div>
+                </>
+              )}
+            </AnimatePresence>
+          </div>
         </div>
       </header>
 
