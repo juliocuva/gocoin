@@ -96,6 +96,11 @@
   color: var(--primary-color);
 }
 
+.icon-btn-ghost.danger:hover {
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--expense-color);
+}
+
 .filter-bar {
   display: flex;
   justify-content: space-between;
