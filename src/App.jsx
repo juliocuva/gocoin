@@ -215,7 +215,10 @@ const App = () => {
           </button>
         </div>
         <div className="logo-container centered">
-          <img src={logo} alt="GoCoin" className="app-logo-header" />
+          <div className="logo-wrapper-gocoin">
+            <span className="logo-prefix">Go</span>
+            <img src={logo} alt="GoCoin" className="app-logo-header" />
+          </div>
         </div>
         <div className="header-actions right">
           <button className="icon-btn-ghost" title="Usuario">

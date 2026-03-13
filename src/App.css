@@ -57,6 +57,19 @@
   object-fit: contain;
 }
 
+.logo-wrapper-gocoin {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.logo-prefix {
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--primary-color);
+  letter-spacing: -1px;
+}
+
 .header-actions {
   display: flex;
   align-items: center;
