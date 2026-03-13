@@ -164,6 +164,13 @@ const App = () => {
   const totalPages = Math.ceil(filteredTransactions.length / ITEMS_PER_PAGE);
 
   const handleAddTransaction = async (newTx) => {
+    if (!user || !user.email) {
+      alert("No se pudo identificar al usuario. Por favor, re-inicia sesión.");
+      return;
+    }
+
+    console.log("Intentando guardar transacción para:", user.email);
+    
     const { error } = await supabase
       .from('transactions')
       .insert([{
@@ -175,8 +182,10 @@ const App = () => {
       }]);
 
     if (error) {
-      alert('Error al guardar en Supabase: ' + error.message);
+      console.error("Error completo de Supabase:", error);
+      alert('Error en base de datos: ' + (error.hint || error.message));
     } else {
+      console.log("Transacción guardada exitosamente");
       fetchTransactions();
       setShowAddModal(false);
     }
@@ -742,14 +751,25 @@ const AuthView = ({ onLogin }) => {
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Simulate auth for study group
-    if (mode === 'login' && email && password) {
-      onLogin({ email, name: email.split('@')[0] });
-    } else if (mode === 'register' && name && email && password) {
-      onLogin({ email, name });
+    setLoading(true);
+    
+    if (mode === 'login') {
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) alert("Error al entrar: " + error.message);
+    } else {
+      const { error } = await supabase.auth.signUp({ 
+        email, 
+        password,
+        options: {
+          data: { full_name: name }
+        }
+      });
+      if (error) alert("Error al registrarse: " + error.message);
+      else alert("¡Registro exitoso! Por favor verifica tu correo.");
     }
+    setLoading(false);
   };
 
   const handleGoogleLogin = async () => {
